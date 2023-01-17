@@ -3,6 +3,7 @@ using la_mia_pizzeria_static.Models;
 using Microsoft.Extensions.Hosting;
 using la_mia_pizzeria_static.Database;
 using Microsoft.SqlServer.Server;
+using Microsoft.EntityFrameworkCore;
 
 namespace la_mia_pizzeria_static.Controllers
 {
@@ -21,8 +22,9 @@ namespace la_mia_pizzeria_static.Controllers
             {
 
                 Pizza pizzaTrovata = db.Pizze
-                    .Where(SingolaPizzaNelDb => SingolaPizzaNelDb.ID == id)
-                    .FirstOrDefault();
+                    .Where(SingolaPizzaNelDb => SingolaPizzaNelDb.Id == id)
+					.Include(pizza => pizza.Category)
+					.FirstOrDefault();
 
 
                 if (pizzaTrovata != null)
@@ -38,21 +40,34 @@ namespace la_mia_pizzeria_static.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            return View("Create");
-        }
+			using (PizzaContext db = new PizzaContext())
+			{
+				List<Category> categoriesFromDb = db.Categories.ToList<Category>();
+
+				PizzaCategoryView modelForView = new PizzaCategoryView();
+				modelForView.Pizza = new Pizza();
+
+				modelForView.Categories = categoriesFromDb;
+
+				return View("Create", modelForView);
+			}
+		}
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Pizza formData)
+        public IActionResult Create(PizzaCategoryView formData)
         {
             if (!ModelState.IsValid)
-            {
-                return View("Create", formData);
-            }
+				using (PizzaContext db = new PizzaContext())
+				{
+					List<Category> categories = db.Categories.ToList<Category>();
 
-            using (PizzaContext db = new PizzaContext())
+					formData.Categories = categories;
+				}
+
+			using (PizzaContext db = new PizzaContext())
             {
-                db.Pizze.Add(formData);
+                db.Pizze.Add(formData.Pizza);
                 db.SaveChanges();
             }
 
@@ -64,37 +79,51 @@ namespace la_mia_pizzeria_static.Controllers
         {
             using (PizzaContext db = new PizzaContext())
             {
-                Pizza pizzaToUpdate = db.Pizze.Where(pizza => pizza.ID == id).FirstOrDefault();
+                Pizza pizzaToUpdate = db.Pizze.Where(pizza => pizza.Id == id).FirstOrDefault();
 
                 if (pizzaToUpdate == null)
                 {
                     return NotFound("La pizza non è stata trovata");
                 }
 
-                return View("Update", pizzaToUpdate);
+				List<Category> categories = db.Categories.ToList<Category>();
+
+				PizzaCategoryView modelForView = new PizzaCategoryView();
+				modelForView.Pizza = pizzaToUpdate;
+				modelForView.Categories = categories;
+
+				return View("Update", modelForView);
             }
 
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Update(Pizza formData)
+        public IActionResult Update(PizzaCategoryView formData)
         {
             if (!ModelState.IsValid)
             {
-                return View("Update", formData);
+				using (PizzaContext db = new PizzaContext())
+				{
+					List<Category> categories = db.Categories.ToList<Category>();
+
+					formData.Categories = categories;
+				}
+
+				return View("Update", formData);
             }
 
             using (PizzaContext db = new PizzaContext())
             {
-                Pizza pizzaToUpdate = db.Pizze.Where(pizza => pizza.ID == formData.ID).FirstOrDefault();
+                Pizza pizzaToUpdate = db.Pizze.Where(pizza => pizza.Id == formData.Pizza.Id).FirstOrDefault();
 
                 if (pizzaToUpdate != null)
                 {
-                    pizzaToUpdate.Nome = formData.Nome;
-                    pizzaToUpdate.Foto = formData.Foto;
-                    pizzaToUpdate.Descrizione = formData.Descrizione;
-                    pizzaToUpdate.Prezzo = formData.Prezzo;
+                    pizzaToUpdate.Nome = formData.Pizza.Nome;
+                    pizzaToUpdate.Foto = formData.Pizza.Foto;
+                    pizzaToUpdate.Descrizione = formData.Pizza.Descrizione;
+                    pizzaToUpdate.Prezzo = formData.Pizza.Prezzo;
+                    pizzaToUpdate.CategoryId = formData.Pizza.CategoryId;
 
                     db.SaveChanges();
 
@@ -113,37 +142,51 @@ namespace la_mia_pizzeria_static.Controllers
 		{
 			using (PizzaContext db = new PizzaContext())
 			{
-				Pizza pizzaToDelete = db.Pizze.Where(pizza => pizza.ID == id).FirstOrDefault();
+				Pizza pizzaToDelete = db.Pizze.Where(pizza => pizza.Id == id).FirstOrDefault();
 
 				if (pizzaToDelete == null)
 				{
 					return NotFound("La pizza non è stata trovata");
 				}
 
-				return View("Delete", pizzaToDelete);
+				List<Category> categories = db.Categories.ToList<Category>();
+
+				PizzaCategoryView modelForView = new PizzaCategoryView();
+				modelForView.Pizza = pizzaToDelete;
+				modelForView.Categories = categories;
+
+				return View("Delete", modelForView);
 			}
 
 		}
 
 		[HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete(Pizza formData)
+        public IActionResult Delete(PizzaCategoryView formData)
         {
 			if (!ModelState.IsValid)
 			{
+				using (PizzaContext db = new PizzaContext())
+				{
+					List<Category> categories = db.Categories.ToList<Category>();
+
+					formData.Categories = categories;
+				}
+
 				return View("Delete", formData);
 			}
 
 			using (PizzaContext db = new PizzaContext())
             {
-				Pizza pizzaToDelete = db.Pizze.Where(pizza => pizza.ID == formData.ID).FirstOrDefault();
+				Pizza pizzaToDelete = db.Pizze.Where(pizza => pizza.Id == formData.Pizza.Id).FirstOrDefault();
 
 				if (pizzaToDelete != null)
                 {
-					pizzaToDelete.Nome = formData.Nome;
-                    pizzaToDelete.Foto = formData.Foto;
-					pizzaToDelete.Descrizione = formData.Descrizione;
-					pizzaToDelete.Prezzo = formData.Prezzo;
+					pizzaToDelete.Nome = formData.Pizza.Nome;
+                    pizzaToDelete.Foto = formData.Pizza.Foto;
+					pizzaToDelete.Descrizione = formData.Pizza.Descrizione;
+					pizzaToDelete.Prezzo = formData.Pizza.Prezzo;
+                    pizzaToDelete.CategoryId = formData.Pizza.CategoryId;
 
 					db.SaveChanges();
 
