@@ -19,8 +19,13 @@
             <span asp-validation-for="Pizza.Descrizione" class="text-danger"></span>
         </div>
         <div class="mb-3">
+            <label>Toppings:</label>
+            <select asp-for="Pizza.Toppings" rows="10" class="d-block w-100"></select>
+            <span asp-validation-for="Pizza.Toppings" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
             <label>Prezzo:</label>
-            <textarea asp-for="Pizza.Prezzo" rows="10" class="d-block w-100"></textarea>
+            <input asp-for="Pizza.Prezzo" rows="10" class="d-block w-100">
             <span asp-validation-for="Pizza.Prezzo" class="text-danger"></span>
         </div>
         <div class="mb-3">

@@ -122,6 +122,7 @@ namespace la_mia_pizzeria_static.Controllers
                     pizzaToUpdate.Nome = formData.Pizza.Nome;
                     pizzaToUpdate.Foto = formData.Pizza.Foto;
                     pizzaToUpdate.Descrizione = formData.Pizza.Descrizione;
+                    pizzaToUpdate.Toppings = formData.Pizza.Toppings;
                     pizzaToUpdate.Prezzo = formData.Pizza.Prezzo;
                     pizzaToUpdate.CategoryId = formData.Pizza.CategoryId;
 
@@ -185,6 +186,7 @@ namespace la_mia_pizzeria_static.Controllers
 					pizzaToDelete.Nome = formData.Pizza.Nome;
                     pizzaToDelete.Foto = formData.Pizza.Foto;
 					pizzaToDelete.Descrizione = formData.Pizza.Descrizione;
+                    pizzaToDelete.Toppings = formData.Pizza.Toppings;
 					pizzaToDelete.Prezzo = formData.Pizza.Prezzo;
                     pizzaToDelete.CategoryId = formData.Pizza.CategoryId;
 
