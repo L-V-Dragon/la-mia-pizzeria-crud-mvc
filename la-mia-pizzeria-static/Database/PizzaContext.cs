@@ -11,6 +11,8 @@ namespace la_mia_pizzeria_static.Database
 
 		public DbSet<Category> Categories { get; set; }
 
+		public DbSet<Topping> Toppings { get; set; }	
+
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
 			optionsBuilder.UseSqlServer("Data Source=localhost;Database=PizzeriaV1;" +

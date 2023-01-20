@@ -23,9 +23,9 @@
             <span asp-validation-for="Pizza.Descrizione" class="text-danger"></span>
         </div>
         <div class="mb-3">
-            <label>Toppings:</label>
-            <textarea asp-for="Pizza.Toppings" rows="10" class="d-block w-100"></textarea>
-            <span asp-validation-for="Pizza.Toppings" class="text-danger"></span>
+            <label>Tag:</label>
+            <select asp-for="ToppingsSelectedFromMultipleSelect" asp-items="@Model.Toppings" multiple size="10" class="form-control mb-2 mr-sm-2 ml-sm-3 leftList">
+            </select>
         </div>
         <div class="mb-3">
             <label>Prezzo:</label>

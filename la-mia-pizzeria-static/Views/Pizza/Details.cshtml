@@ -19,7 +19,12 @@
             </p>
             <p>
                 <strong>Toppings:</strong>
-                @Model.Toppings
+                @foreach (Topping topping in Model.Toppings)
+                {
+                    <div>
+                        <label>@topping.Name</label>
+                    </div>
+                }
             </p>
             <p>
                 <strong>Prezzo:</strong>
